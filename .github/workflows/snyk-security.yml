@@ -67,5 +67,6 @@ jobs:
       - name: Fail Job if Errors
         run: |
           if [ "${{ steps.codeTest.outcome }}" == 'failure' ]; then
+            echo "Code test failed"
             exit 1
           fi
