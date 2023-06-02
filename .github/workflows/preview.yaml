@@ -27,8 +27,11 @@ jobs:
         with:
           github-token: ${{secrets.GITHUB_TOKEN}}
           script: |
-            github.issues.createComment({
-               issue_number: context.issue.number,
+            const prNumber = context.payload.workflow_run.pull_requests[0].number;
+            const octokit = github.getOctokit(${{secrets.GITHUB_TOKEN}});
+
+            octokit.issues.createComment({
+               issue_number: prNumber,
                owner: context.repo.owner,
                repo: context.repo.repo,
                body: 'The preview URL is: ${{ steps.deploy.outputs.url }}.'
