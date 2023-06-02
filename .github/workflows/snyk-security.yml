@@ -77,9 +77,6 @@ jobs:
         continue-on-error: true
         run: snyk container monitor your/image-to-test --file=Dockerfile
 
-      - name: Show upload
-        continue-on-error: true
-        run: cat snyk-code.sarif
         # Push the Snyk Code results into GitHub Code Scanning tab
       - name: Upload result to GitHub Code Scanning
         uses: github/codeql-action/upload-sarif@v2
