@@ -23,16 +23,31 @@ jobs:
       - name: Deploy Project Artifacts to Vercel
         id: deploy
         run: echo "url=$(vercel deploy --prebuilt --token=${{ secrets.VERCEL_TOKEN }})" >> $GITHUB_OUTPUT
+
       - uses: actions/github-script@v3
         with:
-          github-token: ${{secrets.GITHUB_TOKEN}}
+          github-token: ${{ secrets.GITHUB_TOKEN }}
           script: |
-            const prNumber = context.payload.workflow_run.pull_requests[0].number;
-            const octokit = github.getOctokit(${{secrets.GITHUB_TOKEN}});
+            const payload = context.payload;
+            const pr = payload.workflow_run.pull_requests[0];
+            const comment = "The preview URL is: ${{ steps.deploy.outputs.url }}.";
 
-            octokit.issues.createComment({
-               issue_number: prNumber,
-               owner: context.repo.owner,
-               repo: context.repo.repo,
-               body: 'The preview URL is: ${{ steps.deploy.outputs.url }}.'
-             });
+            const { owner, repo } = context.repo;
+            const { number } = pr;
+
+            const github = context.github;
+            github.issues.createComment({
+              owner,
+              repo,
+              issue_number: number,
+              body: comment
+            });
+#        with:
+#          github-token: ${{secrets.GITHUB_TOKEN}}
+#          script: |
+#            github.issues.createComment({
+#               issue_number: context.payload.workflow_run.pull_requests[0].number,
+#               owner: context.repo.owner,
+#               repo: context.repo.repo,
+#               body: 'The preview URL is: ${{ steps.deploy.outputs.url }}.'
+#             });
