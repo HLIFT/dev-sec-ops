@@ -11,7 +11,7 @@ jobs:
   snyk-test:
     uses: HLIFT/dev-sec-ops/.github/workflows/snyk-security.yml@main
     secrets:
-      SYNC_TOKEN: ${{ secrets.SNYK_TOKEN }}
+      SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
 
   Deploy-Preview:
     if: ${{ github.event.workflow_run.conclusion == 'success' }}
