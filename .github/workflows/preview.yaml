@@ -11,6 +11,7 @@ on:
 jobs:
   Deploy-Preview:
     if: ${{ github.event.workflow_run.conclusion == 'success' }}
+    needs: firstWorkflowJobId
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
@@ -28,18 +29,9 @@ jobs:
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }}
           script: |
-            context.github.issues.createComment({
-              context.owner,
-              context.repo,
-              issue_number: context.payload.workflow_run.pull_requests[0].number,
-              body: "The preview URL is: ${{ steps.deploy.outputs.url }}."
-            });
-#        with:
-#          github-token: ${{secrets.GITHUB_TOKEN}}
-#          script: |
-#            github.issues.createComment({
-#               issue_number: context.payload.workflow_run.pull_requests[0].number,
-#               owner: context.repo.owner,
-#               repo: context.repo.repo,
-#               body: 'The preview URL is: ${{ steps.deploy.outputs.url }}.'
-#             });
+            github.issues.createComment({
+               issue_number: "${{ needs.firstWorkflowJobId.outputs.PR_NUMBER }}",
+               owner: context.repo.owner,
+               repo: context.repo.repo,
+               body: 'The preview URL is: ${{ steps.deploy.outputs.url }}.'
+             });

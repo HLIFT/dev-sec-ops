@@ -70,3 +70,7 @@ jobs:
             echo "Code test failed"
             exit 1
           fi
+
+      - name: Set PR number output
+        id: pr_number
+        run: echo "PR_NUMBER=${{ github.event.pull_request.number }}" >> $GITHUB_ENV
