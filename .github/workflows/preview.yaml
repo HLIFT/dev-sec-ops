@@ -8,7 +8,7 @@ on:
 
 jobs:
   snyk-test:
-    uses: .github/workflows/snyk-security.yml@main
+    uses: ./.github/workflows/snyk-security.yml
     secrets:
       SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
 
