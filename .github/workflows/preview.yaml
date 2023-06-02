@@ -24,23 +24,15 @@ jobs:
         id: deploy
         run: echo "url=$(vercel deploy --prebuilt --token=${{ secrets.VERCEL_TOKEN }})" >> $GITHUB_OUTPUT
 
-      - uses: actions/github-script@v3
+      - uses: actions/github-script@v5
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }}
           script: |
-            const payload = context.payload;
-            const pr = payload.workflow_run.pull_requests[0];
-            const comment = "The preview URL is: ${{ steps.deploy.outputs.url }}.";
-
-            const { owner, repo } = context.repo;
-            const { number } = pr;
-
-            const github = context.github;
-            github.issues.createComment({
-              owner,
-              repo,
-              issue_number: number,
-              body: comment
+            context.github.issues.createComment({
+              context.owner,
+              context.repo,
+              issue_number: context.payload.workflow_run.pull_requests[0].number,
+              body: "The preview URL is: ${{ steps.deploy.outputs.url }}."
             });
 #        with:
 #          github-token: ${{secrets.GITHUB_TOKEN}}
