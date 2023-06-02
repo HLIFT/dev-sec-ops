@@ -65,7 +65,7 @@ jobs:
           sarif_file: snyk-code.sarif
 
       - name: Fail Job if Errors
-        run:
-          if [ steps.codeTest.outcome == 'failure' ]; then
+        run: |
+          if [ "${{ steps.codeTest.outcome }}" == 'failure' ]; then
             exit 1
           fi
