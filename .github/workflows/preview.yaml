@@ -11,7 +11,6 @@ on:
 jobs:
   Deploy-Preview:
     if: ${{ github.event.workflow_run.conclusion == 'success' }}
-    needs: firstWorkflowJobId
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
@@ -24,13 +23,13 @@ jobs:
       - name: Deploy Project Artifacts to Vercel
         id: deploy
         run: echo "url=$(vercel deploy --prebuilt --token=${{ secrets.VERCEL_TOKEN }})" >> $GITHUB_OUTPUT
-
-      - uses: actions/github-script@v5
+      - uses: actions/github-script@v3
         with:
-          github-token: ${{ secrets.GITHUB_TOKEN }}
+          github-token: ${{secrets.GITHUB_TOKEN}}
           script: |
+            echo "context.issue.number";
             github.issues.createComment({
-               issue_number: "${{ needs.firstWorkflowJobId.outputs.PR_NUMBER }}",
+               issue_number: context.issue.number,
                owner: context.repo.owner,
                repo: context.repo.repo,
                body: 'The preview URL is: ${{ steps.deploy.outputs.url }}.'
