@@ -19,10 +19,10 @@
 name: Snyk Security
 
 on:
-  push:
-    branches: ["main" ]
-  pull_request:
-    branches: ["main"]
+  workflow_call:
+    secrets:
+      SNYK_TOKEN:
+        required: true
 
 env:
   # This is where you will need to introduce the Snyk API token created with your Snyk account
@@ -55,18 +55,11 @@ jobs:
         # Use || true to not fail the pipeline
       - name: Snyk Code test
         id: codeTest
-        continue-on-error: true
         run: snyk code test --sarif > snyk-code.sarif # || true
 
         # Push the Snyk Code results into GitHub Code Scanning tab
       - name: Upload result to GitHub Code Scanning
         uses: github/codeql-action/upload-sarif@v2
+        if: failure()
         with:
           sarif_file: snyk-code.sarif
-
-      - name: Fail Job if Errors
-        run: |
-          if [ "${{ steps.codeTest.outcome }}" == 'failure' ]; then
-            echo "Code test failed"
-            exit 1
-          fi
